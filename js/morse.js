@@ -1,7 +1,7 @@
 $(function () {
 	initWidget();
 	var currentMessage = {
-		showDivInfo:{}
+		showDivInfo: {}
 	}
 	initBtn(currentMessage);
 });
@@ -116,37 +116,40 @@ function initBtn(currentMessage) {
 	$("#begin").click(function () {
 		// console.log(currentMessage.showDivInfo.showDivMorse);
 		// console.log($("#showDiv").val(),$("#create").data('switch'));
-		if ($("#create").data('switch')) { //生成了报文
-			var onmusic = currentMessage.showDivInfo.showDivMorse; //使用随机生成的报文
-			var ontext = currentMessage.showDivInfo.showDivText;
-		} else if (!$("#showDiv").val() && !$("#translateDiv").val()) { //翻译的报文
-			
-			currentMessage.showDivInfo = createTranslate(currentMessage); //使用翻译好的报文
-			var onmusic = currentMessage.showDivInfo.showDivMorse;
-		} else { //错误
-			return
-		}
+		if (!$("#begin").data('isOn')) {
+			$("#begin").data('isOn', true).html('停止听写');
+			if ($("#create").data('switch')) { //生成了报文
+				var onmusic = currentMessage.showDivInfo.showDivMorse; //使用随机生成的报文
+				var ontext = currentMessage.showDivInfo.showDivText;
+			} else if (!$("#showDiv").val() && !$("#translateDiv").val()) { //翻译的报文
 
-		$("#begin").data('isOn', 'true')
-		console.log(onmusic)
-		if ($("#noiseOff")[0].checked) {
-			playBg();
-		}
-		if ($('#messageSpeedT').val() == 0) {
-			$("#tips").html("请输入发报速度！");
-			return false;
-		} else {
+				currentMessage.showDivInfo = createTranslate(currentMessage); //使用翻译好的报文
+				var onmusic = currentMessage.showDivInfo.showDivMorse;
+			} else { //错误
+				return
+			}
+			if ($("#noiseOff")[0].checked) { //背景开关开启
+				playBg();
+			}
+			if ($('#messageSpeedT').val() == 0) { //未填写发报速度
+				$("#tips").html("请输入发报速度！");
+				return false;
+			}
 			var beat = $('#messageSpeedT').val(); //每分钟节拍数
-			var perTime = 60000 / beat;
-
+			var perTime = 60000 / beat; //每拍时间
 			var tempI = async function () {
 				for (var i = 0; i < onmusic.length; i++) {
-					var perMos = onmusic[i]; //. -  'byte' or 'word'
-					console.log(perMos);
-					await play(beat, perMos);
+					var perMos = onmusic[i]; //.  -  'byte'  'word' or "end" 共五种状态
+					try {
+						await play(beat, perMos);
+					} catch (e) {
+						console.log("用户暂停");
+					}
 				}
 			}
 			tempI();
+		} else {
+			$("#begin").data('isOn', false).html('开始听写');
 		}
 	});
 	$('#translate').click(function () {
@@ -216,28 +219,6 @@ function initBtn(currentMessage) {
 				playBg();
 		}
 	});
-
-}
-
-function artiTranslate(inMorse) { //反译
-	var option = {
-		space: ' ',
-		long: '-',
-		short: '.'
-	};
-	var reg = /^[.-]/g
-	var isMorse = reg.test(inMorse)
-	if (isMorse) {
-		var outStr = xmorse.decode(inMorse, option);
-		console.log(inMorse + "  反译码为  " + outStr);
-		$("#showDiv").html(outStr);
-	} else {
-		var outStr = xmorse.encode(inMorse, option);
-		console.log(inMorse + "  译码为  " + outStr);
-		$("#showDiv").html(inMorse);
-		$("#translateDiv").html(outStr);
-	}
-
 }
 
 function goTranslate(inContent) {
@@ -278,11 +259,24 @@ function goTranslate(inContent) {
 	$("#translateDiv").html(outStr);
 }
 
-function closeBg() {
-	$("#bg")[0].pause();
-	$("#bg").attr({
-		'src': ""
-	});
+function artiTranslate(inMorse) { //反译
+	var option = {
+		space: ' ',
+		long: '-',
+		short: '.'
+	};
+	var reg = /^[.-]/g
+	var isMorse = reg.test(inMorse)
+	if (isMorse) {
+		var outStr = xmorse.decode(inMorse, option);
+		console.log(inMorse + "  反译码为  " + outStr);
+		$("#showDiv").html(outStr);
+	} else {
+		var outStr = xmorse.encode(inMorse, option);
+		console.log(inMorse + "  译码为  " + outStr);
+		$("#showDiv").html(inMorse);
+		$("#translateDiv").html(outStr);
+	}
 }
 
 function playBg() {
@@ -294,7 +288,18 @@ function playBg() {
 	});
 	$("#bg")[0].play();
 }
+
+function closeBg() {
+	$("#bg")[0].pause();
+	$("#bg").attr({
+		'src': ""
+	});
+}
+
 async function play(beat, perMos) {
+	if (!$("#begin").data('isOn'))
+		throw 0
+	console.log(perMos);
 	switch (perMos) {
 		case ".":
 			await playAudio(beat, 1);
@@ -336,8 +341,6 @@ function playAudio(beat, mul) {
 		}
 		$("#morseMp3")[0].play();
 		setTimeout(resolve, 60000 / beat);
-
-
 	});
 
 };
@@ -350,8 +353,8 @@ function sleep(time) { //异步休眠
 }
 
 function createTranslate(currentMessage) {
-	var translateStr=currentMessage.showDivInfo.translateStr 
-	var showStr=currentMessage.showDivInfo.showStr
+	var translateStr = currentMessage.showDivInfo.translateStr
+	var showStr = currentMessage.showDivInfo.showStr
 	$("#showDiv").html('')
 	$("#translateDiv").html('')
 	var translateArr = translateStr.trim().split(' ')
@@ -365,9 +368,8 @@ function createTranslate(currentMessage) {
 	var tranNum = translateArr.length;
 	var showNum = showArr.length;
 	while (tranNum) {
-		
 		var dotSpan = document.createElement('span');
-		while ($.trim(translateArr[dotIndex]).length==0 ||translateArr[dotIndex]===undefined) {
+		while ($.trim(translateArr[dotIndex]).length == 0 || translateArr[dotIndex] === undefined) {
 			translateArr.splice(dotIndex, 1)
 			tranNum--
 		}
@@ -383,7 +385,7 @@ function createTranslate(currentMessage) {
 	}
 	while (showNum) {
 		var aSpan = document.createElement('span');
-		while ($.trim(showArr[wordIndex]).length==0 ||showArr[wordIndex]===undefined) {
+		while ($.trim(showArr[wordIndex]).length == 0 || showArr[wordIndex] === undefined) {
 			showArr.splice(wordIndex, 1)
 			showNum--
 		}
@@ -414,8 +416,8 @@ function createTranslate(currentMessage) {
 	// console.log(translateArr, showArr, palyArr);
 	var showDivInfo = {
 		showDivMorse: showDivMorse,
-		translateStr:translateStr,
-		showStr:showStr
+		translateStr: translateStr,
+		showStr: showStr
 	};
 	return showDivInfo;
 }
@@ -453,7 +455,6 @@ function createMessage(morse, range) { //生成随机报文
 			$("#translateDiv").append(dotSpan)
 			$("#showDiv").append(aSpan)
 		}
-
 
 		word += morse.num[randomNum];
 		dotWord += morse.morse[randomNum];
