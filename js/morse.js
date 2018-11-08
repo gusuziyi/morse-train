@@ -158,7 +158,7 @@ function initBtn(currentMessage) {
 			$("#showDiv").css('display', 'none'); //报文div不可见
 			$("#translateDiv").html(''); //清空翻译内容
 			$("#inContent").attr({ //input可见
-				'style': 'display:block;width:80%; height:22px;',
+				'style': 'display:block;width:80%; height:40px;font-size:40px;line-height:40px;padding:5px;',
 				'title': '输入报文后,请再次点击翻译按钮', //控制jqeryUI的toolkip
 				'placeholder': '单击此处输入报文'
 			}).val('')
@@ -181,7 +181,7 @@ function initBtn(currentMessage) {
 			$("#translateDiv").css('display', 'none');
 			$("#showDiv").html('');
 			$("#inMorse").attr({
-				'style': 'display:block;width:80%; height:22px;',
+				'style': 'display:block;width:80%; height:40px;font-size:40px;line-height:40px;',
 				'title': '输入报文后,请再次点击翻译按钮',
 				'placeholder': '单击此处输入报文'
 			}).val('')

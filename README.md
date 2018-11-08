@@ -14,7 +14,6 @@
 
 -[预览地址](https://gusuziyi.github.io/morse-train/)
 
-
 # 总结：
 
 - 一、关于gulp，由于之前一直在学webpack，所以经常看到webpack和gulp相比较的文章，正好这次有这个需求，就尝试了一下gulp，使用体验就是很简单，用了二小时看了几篇文章就很熟练了，当然缺点也是很简单，一些功能做不到，还有一些功能要用额外插件来做，配置起来很麻烦。比如这个程序里绝大部分使用es5语法，但还有一些[…]、promise、require之类的es6语法，还有await、async这种es7语法,由于浏览器只认识es5,所以必须用babel转码，而babel在gulp需要手工配置，这是一个天坑。首先babel-core和 gulp-babel版本不能用最新的，否则会报错误找不到@babelcore，至少要退化两个以上的版本，其次要支持es7，必须添加babel-plugin-transform-runtime，同时在.babelrc文件中添加对应的plugins。然而，transform-runtime只是把regenerator转换成require，此时可以在node上运行，但是想要用浏览器直接运行还要添加gulp-browserify把require转成es5，注意顺序，要在babel()之后,在uglity()之前
