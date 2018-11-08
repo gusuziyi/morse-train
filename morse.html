@@ -5,22 +5,22 @@
 	<meta charset="utf-8">
 	<title>莫斯码听写训练</title>
 	<link href="css/jquery-ui.min.css" rel="stylesheet">
-	<link rel="stylesheet" type="text/css" href="css/morse.min.css">
 	<script type="text/javascript" src="support/js/jquery.js"></script>
 	<script type="text/javascript" src="support/js/jquery-ui.min.js"></script>
 	<script type="text/javascript" src="support/js/audiolet.min.js"></script>
 	<script type="text/javascript" src="support/js/xmorse.min.js"></script>
 	<script type="text/javascript" src="out/morse.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="css/morse.min.css">
 </head>
 
 <body>
-	<div id="wrapper">
+	<div id="wrapper" class="wrapper">
 		<h1>莫尔斯报文练习系统</h1>
-		<div id="left">
-			<h4 class="title">报文设置</h3>
+		<div id="left" class="left">
+			<h4 class="title">报文设置</h4>
 			<div>
 				<label for="messageType">报文类型</label>
-				<select id="messageType">
+				<select id="messageType" class="messageType">
 					<option>长码</option>
 					<option>短码</option>
 					<option selected="selected">字码</option>
@@ -31,50 +31,50 @@
 
 			<div>
 				<label for="messageGroup">报文组数</label>
-				<input type="text" name="messageGroupT" id="messageGroupT" value="20">
-				<div id="messageGroup"></div>
+				<input type="text" name="messageGroupT" id="messageGroupT" class="messageGroupT" value="20" />
+				<div id="messageGroup" class="messageGroup"></div>
 			</div>
 
 			<div>
 				<label for="messageSpeed">发报速度</label>
-				<input type="text" name="messageSpeedT" id="messageSpeedT" value="200">
-				<div id="messageSpeed"></div>
+				<input type="text" name="messageSpeedT" id="messageSpeedT" class="messageSpeedT" value="200"/>
+				<div id="messageSpeed" class="messageSpeed"></div>
 			</div>
 
 			<div>
 				<label for="noiseDiv">背景杂音</label>
-				<div id="noiseDiv">
-					<select id="noiseSelect" name="noiseSelect">
+				<div id="noiseDiv" class="noiseDiv">
+					<select id="noiseSelect" class="noiseSelect" name="noiseSelect">
 						<option>狂风噪声</option>
 						<option>空间噪声</option>
 						<option>卫星噪声</option>
 					</select>
-					<label for="noiseOff" class='noiseOffTurn'>背景开关</label>
-					<input type="checkbox" name="noiseOff" id="noiseOff">
+					<label for="noiseOff"  class="noiseOffTurn">背景开关</label>
+					<input type="checkbox" name="noiseOff" id="noiseOff" class="noiseOff">
 				</div>
 			</div>
 			<div>
 				<label for="noiseStrong">背景强度</label>
-				<input type="text" name="noiseStrong" id="noiseStrong" value="0">
+				<input type="text" name="noiseStrong" id="noiseStrong" placeholder="有效值-2到2" class="noiseStrong" value="0">
 			</div>
 
-			<div class='btnDiv'>
-				<button id="create" data-switch='false'>生成报文</button>
+			<div class="btnDiv">
+				<button id="create" data-switch="false">生成报文</button>
 				<button id="show" class="isShow">隐藏报文</button>
 				<button id="begin">开始听写</button>
-				<button id="translate"  data-switch='false'>翻译报文</button>
-				<button id="arti" data-switch='false'>反译报文</button>
+				<button id="translate"  data-switch="false">翻译报文</button>
+				<button id="arti" data-switch="false">反译报文</button>
 			</div>
 		</div>
-		<label id="tips"></label>
+		<label id="tips" class="tips"></label>
 
-		<div id="right">
+		<div id="right" class="right">
 			<h3 class="title">报文显示</h3>
-			<div id="showDiv"></div>
-			<input type="text" id='inContent' style="display: none;"/>
-			<h3 id='translateTitle' class="title">点划序列</h3>
-			<div id="translateDiv"></div>
-			<input type="text" id='inMorse' style="display: none;"/>
+			<div id="showDiv" class="showDiv"></div>
+			<input type="text" id="inContent" class="inContent" style="display: none;"/>
+			<h3 id="translateTitle" class="title">点划序列</h3>
+			<div id="translateDiv" class="translateDiv"></div>
+			<input type="text" id="inMorse"  class="inMorse" style="display: none;"/>
 			<div hidden="hidden">
 				<audio id="morseMp3"></audio>
 				<audio id="bg"></audio>
