@@ -12,7 +12,8 @@
 
 - 共耗时8天，使用JQueryUi + Promise + async编写而成
 
--[预览地址](https://gusuziyi.github.com/morse-train/)
+-[预览地址](https://gusuziyi.github.io/morse-train/)
+
 
 # 总结：
 
