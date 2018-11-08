@@ -1,4 +1,4 @@
-@media screen and (min-width: 800px) {
+@media screen and (min-width: 801px) {
 
 	.wrapper,
 	.wrapper .noiseDiv .noiseSelect {
@@ -7,7 +7,7 @@
 
 	.wrapper {
 		margin: 50px auto;
-		font-size: 16px
+		font-size: 20px
 	}
 
 	.wrapper h1 {
@@ -52,7 +52,7 @@
 	}
 }
 
-@media screen and (min-width: 100px) {
+@media screen and (min-width: 100px) and (max-width: 800px){
 	.wrapper,
 		.wrapper .noiseDiv .noiseSelect {
 			width: 90%;
@@ -60,40 +60,40 @@
 		}
 	
 		.wrapper {
-			margin: 50px auto;
-			font-size: 40px;
+			margin: 30px auto;
+			font-size: 16px;
 		}
 	
 		.wrapper h1 {
 			text-align: center;
+			margin-bottom: 50px;
 		}
 	
 		.wrapper .messageGroup,
 		.wrapper .messageSpeed {
 			display: inline-block;
 			width: 90%;
-			margin-top:20px;
+			margin-top:15px;
 			
 		}
 		.wrapper  .messageGroupT,
 		.wrapper  .messageSpeedT{
-			line-height: 30px;
-			font-size: 40px;
+			line-height: 20px;
+			font-size: 16px;
 		}
 	
 		.wrapper .left>div {
 			margin-bottom: 15px
 		}
 		.wrapper .left .btnDiv{
-			margin: auto -25px;
 			padding-left: 10px;
 		}
 		.wrapper .left button{
 			margin: 10px;
-			font-size: 40px;
+			font-size: 16px;
 		}
 		.wrapper .messageType{
-			font-size: 40px;
+			font-size: 16px;
 			margin-left: 10px;
 			padding: 5px;
 		}
@@ -104,7 +104,7 @@
 		#wrapper .noiseSelect{
 			display: block;
 			padding: 5px;
-			font-size: 40px;
+			font-size: 16px;
 		}
 		.wrapper .noiseDiv .noiseOffTurn{
 			margin-top: 20px;
@@ -114,8 +114,8 @@
 		.wrapper .noiseDiv .noiseOff {
 			display: inline-block;
 			margin-top: 0px;
-			width: 40px;
-			height: 40px
+			width: 20px;
+			height: 20px
 		}
 	
 		.showDiv,
@@ -124,10 +124,10 @@
 			width: 100%;
 			word-wrap: break-word;
 			white-space: normal;
-			height: 40px;
-			padding: 10px;
-			font-size: 40px;
-			line-height: 40px;
+			height: 20px;
+			padding: 5px;
+			font-size: 16px;
+			line-height: 20px;
 		}
 	
 		.showDiv span,
@@ -140,8 +140,8 @@
 			color: red
 		}
 		#right #inMorse,#right #inContent{
-			line-height: 50px;
-			height: 50px!important;
-			font-size: 40px;
+			line-height: 25px;
+			height: 25px!important;
+			font-size: 16px;
 		}
 }
