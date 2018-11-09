@@ -1,4 +1,4 @@
-$(function () {
+$(function() {
 	initWidget();
 	var currentMessage = {
 		showDivInfo: {}
@@ -68,13 +68,13 @@ function getmorse() { //初始化各类型莫尔斯码
 }
 
 function initBtn(currentMessage) {
-	$("#noiseSelect").change(function () { //背景杂音选项
+	$("#noiseSelect").change(function() { //背景杂音选项
 		if (!$("#noiseOff")[0].checked || !$("#begin").data('isOn')) {
 			return //在背景开关关闭 或 未按下开始按钮时无效
 		}
 		playBg();
 	});
-	$("#create").click(function () {
+	$("#create").click(function() {
 		$("#create").data('switch', true)
 		$('#showDiv').html('');
 		$('#translateDiv').html('');
@@ -113,7 +113,7 @@ function initBtn(currentMessage) {
 		currentMessage.showDivInfo = createMessage(morseObj[messageType], range);
 	});
 
-	$("#begin").click(function () {
+	$("#begin").click(function() {
 		// console.log(currentMessage.showDivInfo.showDivMorse);
 		// console.log($("#showDiv").val(),$("#create").data('switch'));
 		if (!$("#begin").data('isOn')) {
@@ -121,6 +121,8 @@ function initBtn(currentMessage) {
 			if ($("#create").data('switch')) { //生成了报文
 				var onmusic = currentMessage.showDivInfo.showDivMorse; //使用随机生成的报文
 				var ontext = currentMessage.showDivInfo.showDivText;
+				$("#translateDiv span:first").addClass("active") //首项dom标红
+				$("#showDiv span:first").addClass("active")
 			} else if (!$("#showDiv").val() && !$("#translateDiv").val()) { //翻译的报文
 
 				currentMessage.showDivInfo = createTranslate(currentMessage); //使用翻译好的报文
@@ -135,13 +137,16 @@ function initBtn(currentMessage) {
 				$("#tips").html("请输入发报速度！");
 				return false;
 			}
-			var beat = $('#messageSpeedT').val(); //每分钟节拍数
-			var perTime = 60000 / beat; //每拍时间
-			var tempI = async function () {
+			var speed = $('#messageSpeedT').val(); //每分钟码速
+			var beat = speed * 12 //每分钟点速  
+			//12是利用霍夫曼对摩斯码编码,得到平均码长在R与K之间,每个词约48t,
+			//48t * speed/4 =60000
+			var perTime = 60000 / beat; //每个点时间
+			var tempI = async function() {
 				for (var i = 0; i < onmusic.length; i++) {
 					var perMos = onmusic[i]; //.  -  'byte'  'word' or "end" 共五种状态
 					try {
-						await play(beat, perMos);
+						await play(perTime, perMos);
 					} catch (e) {
 						console.log("用户暂停");
 					}
@@ -150,9 +155,11 @@ function initBtn(currentMessage) {
 			tempI();
 		} else {
 			$("#begin").data('isOn', false).html('开始听写');
+			$("#translateDiv span").last().removeClass("active")
+			$("#showDiv span").last().removeClass("active")
 		}
 	});
-	$('#translate').click(function () {
+	$('#translate').click(function() {
 		// console.log($('#translate').data('switch'));
 		if (!$('#translate').data('switch')) { //打开
 			$("#showDiv").css('display', 'none'); //报文div不可见
@@ -176,7 +183,7 @@ function initBtn(currentMessage) {
 			$("#create").data('switch', false)
 		}
 	});
-	$("#arti").click(function () {
+	$("#arti").click(function() {
 		if (!$('#arti').data('switch')) { //打开
 			$("#translateDiv").css('display', 'none');
 			$("#showDiv").html('');
@@ -200,7 +207,7 @@ function initBtn(currentMessage) {
 		}
 
 	});
-	$("#show").click(function () {
+	$("#show").click(function() {
 		if ($(this).hasClass("isShow")) {
 			$(this).html("显示报文");
 			$(this).removeClass("isShow");
@@ -211,7 +218,7 @@ function initBtn(currentMessage) {
 			$("#showDiv").show();
 		}
 	});
-	$("#noiseOff").click(function () { //背景开关
+	$("#noiseOff").click(function() { //背景开关
 		if (!$("#noiseOff")[0].checked) { //关闭
 			closeBg()
 		} else { //开启
@@ -241,7 +248,7 @@ function goTranslate(inContent) {
 			"--...", "---..", "----.");
 		var findArr = [...inContent];
 		var outStr = '';
-		findArr.forEach(function (i) {
+		findArr.forEach(function(i) {
 			var letterIndex = letters.indexOf(i);
 			var morsePer = morse[letterIndex];
 			outStr += morsePer;
@@ -296,22 +303,22 @@ function closeBg() {
 	});
 }
 
-async function play(beat, perMos) {
+async function play(perTime, perMos) {
 	if (!$("#begin").data('isOn'))
 		throw 0
 	console.log(perMos);
 	switch (perMos) {
 		case ".":
-			await playAudio(beat, 1);
+			await playAudio(perTime);
 			break;
 		case "-":
-			await playAudio(beat, 3);
+			await playAudio(perTime * 3);
 			break;
 		case "byte":
-			await sleep(2 * 60000 / beat);
+			await sleep(2 * perTime);
 			break;
 		case "word":
-			await sleep(6 * 60000 / beat);
+			await sleep(6 * perTime);
 			$('#showDiv span.active').toggleClass('active').next().addClass('active')
 			$('#translateDiv span.active').toggleClass('active').next().addClass('active')
 			break;
@@ -325,24 +332,15 @@ async function play(beat, perMos) {
 
 }
 
-function playAudio(beat, mul) {
-	return new Promise((resolve, reject) => {
-		// console.log('sleep' + 60000 / beat);
-		if (mul == 1) {
-			$("#morseMp3").attr({
-				"src": "support/1.mp3"
-			});
-			// playDot()
-		} else {
-			$("#morseMp3").attr({
-				"src": "support/2.mp3"
-			});
-			// playLine()
-		}
-		$("#morseMp3")[0].play();
-		setTimeout(resolve, 60000 / beat);
-	});
-
+async function playAudio(perTime) {
+	await playDot(perTime)
+	await sleep(perTime);
+	//若外接播放音频,在此处添加
+	/* $("#morseMp3").attr({
+	 	"src": "support/2.mp3"
+	   });
+	   $("#morseMp3")[0].play();
+	*/
 };
 
 function sleep(time) { //异步休眠
@@ -433,22 +431,29 @@ function createMessage(morse, range) { //生成随机报文
 	var translate = '';
 	var word = '';
 	var dotWord = '';
+	if (spaceTemp == 0) { //第一次生成,添加class
+		word = "准备开始"
+		dotWord = "-...-"
+		var start = "-...-"
+		for (var i = 0; i < 5; i++) {
+			showDivMorse.push(start[i])
+		}
+	}
 	while (letterNums > -1) { //为0时生成最后一组
 		var randomNum = Math.floor(Math.random() * range);
-		if (spaceTemp % 4 == 0 && spaceTemp != 0) { //每四个输出一个空格,用于排版
+		if (spaceTemp % 4 == 0) { //每四个输出一个空格,用于排版
 			var aSpan = document.createElement('span');
 			var aP = document.createTextNode(word);
 			aSpan.appendChild(aP);
-			word = '';
 			showDivMorse.push('word');
 			//每4个作为一个word,生成一个span用作包装
 			var dotSpan = document.createElement('span');
 			var dotP = document.createTextNode(dotWord);
 			dotSpan.appendChild(dotP);
+			word = '';
 			dotWord = '';
 
-
-			if (spaceTemp == 4) { //第一次生成,添加class
+			if (spaceTemp == 0) { //第一次生成,添加class
 				aSpan.className = 'active';
 				dotSpan.className = 'active';
 			}
@@ -460,9 +465,14 @@ function createMessage(morse, range) { //生成随机报文
 		dotWord += morse.morse[randomNum];
 
 		var morseTemp = morse.morse[randomNum]
+		if (letterNums == 0) { //倒序遍历的letterNums,为零时最后一组四个丢弃
+			word = '';
+			dotWord = '';
+			morseTemp = '';
+		}
 		if (morseTemp.length > 1) { //byte的morse不止一个点,离散处理 .-.  .,-,.
 			let perMoss = [...morse.morse[randomNum]];
-			// console.log(perMoss);
+			console.log(perMoss);
 			perMoss.forEach((i) => {
 				showDivMorse.push(i);
 			});
@@ -470,16 +480,35 @@ function createMessage(morse, range) { //生成随机报文
 			showDivMorse.push(morseTemp);
 		}
 		showDivMorse.push('byte');
-		letterNums--;
 		spaceTemp++;
+		letterNums--;
+
+	}
+	word = "结束标志";
+	dotWord = ".-.-.";
+	var aSpan = document.createElement('span');
+	var aP = document.createTextNode(word);
+	aSpan.appendChild(aP);
+	//每4个作为一个word,生成一个span用作包装
+	var dotSpan = document.createElement('span');
+	var dotP = document.createTextNode(dotWord);
+	dotSpan.appendChild(dotP);
+	for (var i = 0; i < 5; i++) {
+		showDivMorse.push(dotWord[i])
 	}
 	showDivMorse.push('end'); //while结束
+	$("#translateDiv").append(dotSpan)
+	$("#showDiv").append(aSpan)
+	$("#showDiv span").first().css('display',"block")
+	$("#showDiv span").last().css('display',"block")
+
 
 	var showDivInfo = {
 		showDivText: showDivText,
 		showDivMorse: showDivMorse,
 		translate: translate
 	};
+	// console.log(showDivInfo);
 	return showDivInfo;
 }
 
@@ -487,10 +516,10 @@ function initWidget() { //初始化jq_ui组件
 	$("#messageGroup").slider({
 		range: 'min',
 		min: 0,
-		value: 20,
+		value: 10,
 		max: 300,
-		step: 20,
-		slide: function (e, ui) {
+		step: 10,
+		slide: function(e, ui) {
 			$("#messageGroupT").val(ui.value);
 		}
 	});
@@ -498,10 +527,10 @@ function initWidget() { //初始化jq_ui组件
 	$("#messageSpeed").slider({
 		range: 'min',
 		min: 0,
-		value: 200,
+		value: 100,
 		max: 500,
-		step: 25,
-		slide: function (e, ui) {
+		step: 10,
+		slide: function(e, ui) {
 			$("#tips").html("");
 			$("#messageSpeedT").val(ui.value);
 		}
@@ -514,7 +543,7 @@ function initWidget() { //初始化jq_ui组件
 		min: -2,
 		step: 1,
 		//设置微调按钮递增/递减事件 
-		spin: function (event, ui) {
+		spin: function(event, ui) {
 			if (!$("#noiseOff")[0].checked || !$("#begin").data('isOn')) { //噪声按钮关闭 或 未按下开始听写
 				return
 			}
@@ -522,7 +551,7 @@ function initWidget() { //初始化jq_ui组件
 			// console.log(0.25 * ui.value + 0.5);
 		},
 		//设置微调按钮值改变事件
-		change: function (event, ui) {
+		change: function(event, ui) {
 			if (!$("#noiseOff")[0].checked || !$("#begin").data('isOn')) {
 				return
 			}
@@ -535,45 +564,25 @@ function initWidget() { //初始化jq_ui组件
 	$(document).tooltip();
 }
 
-function playDot() { //生成点
-	var Synth = function (audiolet, frequency) {
-		AudioletGroup.apply(this, [audiolet, 0, 1]);
-		this.sine = new Sine(this.audiolet, frequency);
-		this.modulator = new Saw(this.audiolet, frequency * 2);
-		this.modulatorMulAdd = new MulAdd(this.audiolet, frequency / 2,
-			frequency);
+function playDot(perTime) { //生成点
+	return new Promise(function(resolve, reject) {
+		var sound = new Pizzicato.Sound({ //正弦波440赫兹
+			source: 'wave',
+			options: {
+				frequency: 440
+			}
+		});
 
-		this.gain = new Gain(this.audiolet);
-		this.envelope = new PercussiveEnvelope(this.audiolet, 1, 0.001, 0.1,
-			function () {
-				this.audiolet.scheduler.addRelative(0,
-					this.remove.bind(this));
-			}.bind(this)
-		);
-
-		this.modulator.connect(this.modulatorMulAdd);
-		this.modulatorMulAdd.connect(this.sine);
-
-		this.envelope.connect(this.gain, 0, 1);
-		this.sine.connect(this.gain);
-
-		this.gain.connect(this.outputs[0]);
-	};
-	extend(Synth, AudioletGroup);
-
-	var AudioletApp = function () {
-		this.audiolet = new Audiolet();
-		var synth = new Synth(this.audiolet, 880);
-		synth.connect(this.audiolet.output);
-	};
-
-	this.audioletApp = new AudioletApp();
+		sound.play();
+		setTimeout(function() {
+			resolve(sound.stop())
+		}, perTime)
+	});
 }
 
 function playLine() { //生成划
-	return new Promise(function (resolve, reject) {
-
-		var Synth = function (audiolet, frequency) {
+	return new Promise(function(resolve, reject) {
+		var Synth = function(audiolet, frequency) {
 			AudioletGroup.apply(this, [audiolet, 0, 1]);
 			this.sine = new Sine(this.audiolet, frequency);
 			this.modulator = new Saw(this.audiolet, frequency * 2);
@@ -582,7 +591,7 @@ function playLine() { //生成划
 
 			this.gain = new Gain(this.audiolet);
 			this.envelope = new PercussiveEnvelope(this.audiolet, 1, 0.001, 0.3,
-				function () {
+				function() {
 					this.audiolet.scheduler.addRelative(0,
 						this.remove.bind(this));
 				}.bind(this)
@@ -598,7 +607,7 @@ function playLine() { //生成划
 		};
 		extend(Synth, AudioletGroup);
 
-		var AudioletApp = function () {
+		var AudioletApp = function() {
 			this.audiolet = new Audiolet();
 			var synth = new Synth(this.audiolet, 880);
 			synth.connect(this.audiolet.output);
