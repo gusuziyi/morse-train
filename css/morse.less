@@ -1,4 +1,4 @@
-@media screen and (min-width: 801px) {
+@media screen and (min-width: 901px) {
     #wrapper {
         width: 60%;
         margin: 50px auto;
@@ -33,108 +33,125 @@
         word-wrap: break-word;
         white-space: normal;
         span {
-            margin-right: 10px;
+            margin-right: 1%;
         }
         .active {
             color: red;
         }
     }
-	#right #inMorse,#right #inContent{
-		line-height: 25px;
-		height: 25px!important;
-		font-size: 16px!important;
-	}
+    #showDiv {
+        span {
+            text-align: center;
+            margin-right: 1%;
+            width: 9%;
+            display: inline-block;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .group {
+            display: inline-block;
+        }
+    }
+
+    #right #inMorse,
+    #right #inContent {
+        line-height: 25px;
+        height: 25px !important;
+        font-size: 16px !important;
+    }
 }
-@media screen and (min-width: 100px) and (max-width: 800px){
-	.wrapper,
-		.wrapper .noiseDiv .noiseSelect {
-			width: 90%;
-			height:90%;
-		}
-	
-		.wrapper {
-			margin: 30px auto;
-			font-size: 16px;
-		}
-	
-		.wrapper h1 {
-			text-align: center;
-			margin-bottom: 50px;
-		}
-	
-		.wrapper .messageGroup,
-		.wrapper .messageSpeed {
-			display: inline-block;
-			width: 90%;
-			margin-top:15px;
-			
-		}
-		.wrapper  .messageGroupT,
-		.wrapper  .messageSpeedT{
-			line-height: 20px;
-			font-size: 16px;
-		}
-	
-		.wrapper .left>div {
-			margin-bottom: 15px
-		}
-		.wrapper .left .btnDiv{
-			padding-left: 10px;
-		}
-		.wrapper .left button{
-			margin: 10px;
-			font-size: 16px;
-		}
-		.wrapper .messageType{
-			font-size: 16px;
-			margin-left: 10px;
-			padding: 5px;
-		}
-	
-		.wrapper .noiseDiv {
-			margin-top: 15px;
-		}
-		#wrapper .noiseSelect{
-			display: block;
-			padding: 5px;
-			font-size: 16px;
-		}
-		.wrapper .noiseDiv .noiseOffTurn{
-			margin-top: 20px;
-			display: inline-block;
-			vertical-align: center;
-		}
-		.wrapper .noiseDiv .noiseOff {
-			display: inline-block;
-			margin-top: 0px;
-			width: 20px;
-			height: 20px
-		}
-	
-		.showDiv,
-		.translateDiv {
-			display: inline-block;
-			width: 100%;
-			word-wrap: break-word;
-			white-space: normal;
-			height: 20px;
-			padding: 5px;
-			font-size: 16px;
-			line-height: 20px;
-		}
-	
-		.showDiv span,
-		.translateDiv span {
-			margin-right: 10px
-		}
-	
-		.showDiv .active,
-		.translateDiv .active {
-			color: red
-		}
-		#right #inMorse,#right #inContent{
-			line-height: 25px;
-			height: 25px!important;
-			font-size: 16px;
-		}
+
+.phone() {
+    .wrapper {
+        width: 90%;
+        height: 90%;
+        margin: 30px auto;
+        font-size: 100%;
+        h1 {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .messageGroup,
+        .messageSpeed {
+            display: inline-block;
+            width: 90%;
+            margin-top: 15px;
+        }
+        .messageGroupT,
+        .messageSpeedT {
+            line-height: 20px;
+        }
+        .left > div {
+            margin-bottom: 15px;
+        }
+        .left {
+            .btnDiv {
+                padding-left: 10px;
+            }
+            button {
+                margin: 10px;
+                font-size: 100%;
+            }
+        }
+        .messageType {
+            margin-left: 10px;
+            padding: 5px;
+        }
+
+        .noiseDiv {
+            margin-top: 15px;
+            .noiseOffTurn {
+                margin-top: 20px;
+                display: inline-block;
+                vertical-align: center;
+            }
+            .noiseOff {
+                display: inline-block;
+                margin-top: 0px;
+                width: 20px;
+                height: 20px;
+            }
+        }
+        .noiseSelect {
+            display: block;
+            padding: 5px;
+        }
+        #showDiv,
+        #translateDiv {
+            font-size: 100%;
+            display: inline-block;
+            width: 100%;
+            word-wrap: break-word;
+            white-space: normal;
+            span {
+                margin-right: 1%;
+            }
+            .active {
+                color: red;
+            }
+        }
+        #showDiv {
+            span {
+                text-align: center;
+                margin-right: 1%;
+                width: 9%;
+                display: inline-block;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            .group {
+                display: inline-block;
+            }
+        }
+        #right #inMorse,
+        #right #inContent {
+            line-height: 25px;
+            height: 25px !important;
+            font-size: 100%;
+        }
+    }
+}
+
+@media screen and (min-width: 100px) and (max-width: 900px) {
+    .phone();
 }
