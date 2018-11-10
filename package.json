@@ -20,5 +20,5 @@
   "dependencies": {
     "babel-polyfill": "^6.26.0",
     "xmorse": "^0.0.4"
-  }
+  } 
 }
