@@ -155,8 +155,8 @@ function initBtn(currentMessage) {
 			tempI();
 		} else {
 			$("#begin").data('isOn', false).html('开始听写');
-			$("#translateDiv span").last().removeClass("active")
-			$("#showDiv span").last().removeClass("active")
+			$("#translateDiv span.active").removeClass("active")
+			$("#showDiv span.active").removeClass("active")
 		}
 	});
 	$('#translate').click(function() {
@@ -165,7 +165,7 @@ function initBtn(currentMessage) {
 			$("#showDiv").css('display', 'none'); //报文div不可见
 			$("#translateDiv").html(''); //清空翻译内容
 			$("#inContent").attr({ //input可见
-				'style': 'display:block;width:80%; height:40px;font-size:40px;line-height:40px;padding:5px;',
+				'style': 'display:block;width:80%; ',
 				'title': '输入报文后,请再次点击翻译按钮', //控制jqeryUI的toolkip
 				'placeholder': '单击此处输入报文'
 			}).val('')
@@ -188,7 +188,7 @@ function initBtn(currentMessage) {
 			$("#translateDiv").css('display', 'none');
 			$("#showDiv").html('');
 			$("#inMorse").attr({
-				'style': 'display:block;width:80%; height:40px;font-size:40px;line-height:40px;',
+				'style': 'display:block;width:80%; ',
 				'title': '输入报文后,请再次点击翻译按钮',
 				'placeholder': '单击此处输入报文'
 			}).val('')
@@ -309,10 +309,10 @@ async function play(perTime, perMos) {
 	console.log(perMos);
 	switch (perMos) {
 		case ".":
-			await playAudio(perTime);
+			await playAudio(perTime, 1);
 			break;
 		case "-":
-			await playAudio(perTime * 3);
+			await playAudio(perTime, 3);
 			break;
 		case "byte":
 			await sleep(2 * perTime);
@@ -322,6 +322,17 @@ async function play(perTime, perMos) {
 			$('#showDiv span.active').toggleClass('active').next().addClass('active')
 			$('#translateDiv span.active').toggleClass('active').next().addClass('active')
 			break;
+		case "row": //跨行符号,此处不停顿
+				$('#showDiv p.active').toggleClass('active').next().addClass('active')
+				$('#translateDiv p.active').toggleClass('active').next().addClass('active')
+				break;
+		case "begin":
+				await sleep(6 * perTime);
+				$('#showDiv').find('span.active').toggleClass('active')
+				$('#showDiv').find('span.row').first().addClass('active')
+				$('#translateDiv').find('span.active').toggleClass('active')
+				$('#translateDiv').find('span.row').first().addClass('active')
+				break;
 		case "end":
 			if ($('#noiseOff')[0].checked)
 				closeBg();
@@ -332,8 +343,8 @@ async function play(perTime, perMos) {
 
 }
 
-async function playAudio(perTime) {
-	await playDot(perTime)
+async function playAudio(perTime, num) {
+	await playDot(perTime * num)
 	await sleep(perTime);
 	//若外接播放音频,在此处添加
 	/* $("#morseMp3").attr({
@@ -420,6 +431,24 @@ function createTranslate(currentMessage) {
 	return showDivInfo;
 }
 
+function newRow() { //新建一个换行
+	var dotrow = document.createElement('p');
+	var arow = document.createElement('p');
+	$("#translateDiv").append(dotrow)
+	$("#showDiv").append(arow)
+}
+
+function newSpan(father, word, className) {
+	//新建一个报文span(四个字母) 或 一个摩斯码span(对应四个字母的摩斯码)
+	var spanClassName = className || ""
+	var aSpan = document.createElement('span');
+	var aP = document.createTextNode(word);
+	aSpan.appendChild(aP);
+	spanClassName ? aSpan.className = spanClassName : '';
+	father.append(aSpan)
+}
+
+
 function createMessage(morse, range) { //生成随机报文
 	if ($("#messageType").val() != '勤务用语')
 		var letterNums = $("#messageGroupT").val() * 4;
@@ -431,36 +460,54 @@ function createMessage(morse, range) { //生成随机报文
 	var translate = '';
 	var word = '';
 	var dotWord = '';
+	var rowFlag = 0; //for output %40  
+	var $showDiv = $("#showDiv")
+	var $translateDiv = $("#translateDiv")
 	if (spaceTemp == 0) { //第一次生成,添加class
-		word = "准备开始"
-		dotWord = "-...-"
-		var start = "-...-"
-		for (var i = 0; i < 5; i++) {
-			showDivMorse.push(start[i])
-		}
+		for (var i = 0; i < 11; i++) {
+			if (i == 0) {
+				word = "准备开始"
+				dotWord = "-...-"
+				var start = "-...-"
+				for (var j = 0; j < 5; j++) {
+					showDivMorse.push(start[j])
+				}
+				showDivMorse.push('begin');
+			} else {
+				word =  i + "组"
+				dotWord = ''
+			}
+			var className = ""
+			i == 0 ? className = 'active' : className = "group" //标红"准备开始",标志组别
+			newSpan($showDiv, word, className)
+			//每4个作为一个word,生成一个span用作包装
+			if (dotWord) { //准备开始对应的摩斯码
+				newSpan($translateDiv, dotWord, 'active')
+			}
+			if (i == 0) { //第一行输出一个回车
+				newRow()
+			}
+		} //for结束
+		word = '';
+		dotWord = '';
 	}
 	while (letterNums > -1) { //为0时生成最后一组
 		var randomNum = Math.floor(Math.random() * range);
-		if (spaceTemp % 4 == 0) { //每四个输出一个空格,用于排版
-			var aSpan = document.createElement('span');
-			var aP = document.createTextNode(word);
-			aSpan.appendChild(aP);
+		if (spaceTemp % 4 == 0 && spaceTemp != 0) { //每四个输出一个空格,用于排版
+			newSpan($showDiv, word,className) //生成一个词
 			showDivMorse.push('word');
 			//每4个作为一个word,生成一个span用作包装
-			var dotSpan = document.createElement('span');
-			var dotP = document.createTextNode(dotWord);
-			dotSpan.appendChild(dotP);
+			newSpan($translateDiv, dotWord,className) //生成一个词所对应的摩斯码
 			word = '';
 			dotWord = '';
-
-			if (spaceTemp == 0) { //第一次生成,添加class
-				aSpan.className = 'active';
-				dotSpan.className = 'active';
-			}
-			$("#translateDiv").append(dotSpan)
-			$("#showDiv").append(aSpan)
+			className='';
 		}
 
+		if (rowFlag % 40 == 0) { //每40个一个换行,由于0代表"准备开始"行
+			newRow()
+			className='row'
+			showDivMorse.push('row');
+		}
 		word += morse.num[randomNum];
 		dotWord += morse.morse[randomNum];
 
@@ -482,25 +529,19 @@ function createMessage(morse, range) { //生成随机报文
 		showDivMorse.push('byte');
 		spaceTemp++;
 		letterNums--;
+		rowFlag++;
 
 	}
 	word = "结束标志";
 	dotWord = ".-.-.";
-	var aSpan = document.createElement('span');
-	var aP = document.createTextNode(word);
-	aSpan.appendChild(aP);
-	//每4个作为一个word,生成一个span用作包装
-	var dotSpan = document.createElement('span');
-	var dotP = document.createTextNode(dotWord);
-	dotSpan.appendChild(dotP);
 	for (var i = 0; i < 5; i++) {
 		showDivMorse.push(dotWord[i])
 	}
 	showDivMorse.push('end'); //while结束
-	$("#translateDiv").append(dotSpan)
-	$("#showDiv").append(aSpan)
-	$("#showDiv span").first().css('display',"block")
-	$("#showDiv span").last().css('display',"block")
+	newSpan($showDiv, word)
+	newSpan($translateDiv, dotWord)
+	$("#showDiv span").first().css('display', "block")
+	$("#showDiv span").last().css('display', "block")
 
 
 	var showDivInfo = {
@@ -572,7 +613,6 @@ function playDot(perTime) { //生成点
 				frequency: 440
 			}
 		});
-
 		sound.play();
 		setTimeout(function() {
 			resolve(sound.stop())

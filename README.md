@@ -33,26 +33,30 @@
 
 - InitBtn：（line70）用于为页面中所有按钮赋予功能
 
-- goTranslate：（line221）翻译模块，首先判断是否有中文，无中文,使用混合码字典，有中文，则调用xmorse模块
+- goTranslate：（line231）翻译模块，首先判断是否有中文，无中文,使用混合码字典，有中文，则调用xmorse模块
 
-- artiTranslate：（line259）反译模块，判断是否只有 . 和 – ，若是则反译成报文，否则翻译成莫尔斯码
+- artiTranslate：（line269）反译模块，判断是否只有 . 和 – ，若是则反译成报文，否则翻译成莫尔斯码
 
-- playBg：（line279）播放选定的背景音乐
+- playBg：（line289）播放选定的背景音乐
 
-- closeBg：（line289）终止选定的背景音乐
+- closeBg：（line299）终止选定的背景音乐
 
-- async play：（line296）用于处理系统产生的 点、划、字、词等事件，决定如何播放和等待
+- async play：（line306）用于处理系统产生的 点、划、字、词等事件，决定如何播放和等待
 
-- playAudio：（line322）区分点、划进行播放
+- playAudio：（line346）区分点、划进行播放
 
-- sleep：（line342）系统休眠，用于生成听写时的时间间隙
+- sleep：（line357）系统休眠，用于生成听写时的时间间隙
 
-- createTranslate：（line349）将翻译出的报文转译成系统可播放、识别的格式。思路是将报文字符串转成数组，数组元素包裹span插入dom，以实现跟随听写字符标红，把摩斯码打碎成点划并加入byte、word等控制信息
+- createTranslate：（line364）将翻译出的报文转译成系统可播放、识别的格式。思路是将报文字符串转成数组，数组元素包裹span插入dom，以实现跟随听写字符标红，把摩斯码打碎成点划并加入byte、word等控制信息
 
-- createMessage：（line419）随机生成若干组报文，实现思路同上
+- newRow: （line419）在界面中创建一个换行符
 
-- initWidget：（line480）初始化widget，注意不要在widget内再封装widget，没有内部通信方法
+- newSpan: （line441）在界面中动态创建报文span
 
-- playDot：（line532）生成点，为正弦波添加矩形滤波器后调制，在440hz上0.1秒内声音近似为点
+- createMessage：（line452）随机生成若干组报文，实现思路同上
 
-- playLine：（line567）生成划，思路同上，只是将时长设置为dot的三倍
+- initWidget：（line556）初始化widget，注意不要在widget内再封装widget，没有内部通信方法
+
+- playDot：（line608）生成点，为正弦波添加矩形滤波器后调制，在440hz上0.1秒内声音近似为点
+
+- playLine：（line623）生成划，思路同上，只是将时长设置为dot的三倍
