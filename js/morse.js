@@ -13,7 +13,7 @@ function getmorse() { //初始化各类型莫尔斯码
 		"--...", "---..", "----.");
 	var shortNum = longNum;
 	var shortNumMorse = new Array("-", ".-", "..-", "...--", "....-",
-		".", "-....", "--.", "-..", "-.");
+		".....", "-....", "--...", "-..", "-.");
 	var letter = new Array(...'abcdefghijklmnopqrstuvwxyz')
 	var letterMorse = new Array(
 		".-", "-...", "-.-.", "-..", ".", "..-.",
@@ -508,6 +508,19 @@ function createMessage(morse, range) { //生成随机报文
 			className='row'
 			showDivMorse.push('row');
 		}
+		
+		if (rowFlag % 400 == 0&&rowFlag!=0) { //每400个一个分页
+					var dotpage = document.createElement('p');
+					var apage = document.createElement('p');
+					var aText = document.createTextNode("下页");
+					var dotText = document.createTextNode("下页");
+					apage.appendChild(aText);
+					dotpage.appendChild(dotText);
+					$("#translateDiv").append(dotpage)
+					$("#showDiv").append(apage)
+					className='row'
+					showDivMorse.push('row');
+			}
 		word += morse.num[randomNum];
 		dotWord += morse.morse[randomNum];
 
@@ -558,7 +571,7 @@ function initWidget() { //初始化jq_ui组件
 		range: 'min',
 		min: 0,
 		value: 10,
-		max: 300,
+		max: 380,
 		step: 10,
 		slide: function(e, ui) {
 			$("#messageGroupT").val(ui.value);
