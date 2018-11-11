@@ -8,7 +8,6 @@ gulp.task('less',()=>{
 	.pipe(plugins.minifyCss())
 	.pipe(plugins.rename({extname:'.min.css'}))
 	.pipe(gulp.dest('css'));
-	
 });
 
 gulp.task('js',()=>{
